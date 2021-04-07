@@ -1,3 +1,0 @@
-[submodule "devcenter-embedded-tomcat"]
-	path = devcenter-embedded-tomcat
-	url = https://github.com/heroku/devcenter-embedded-tomcat.git
