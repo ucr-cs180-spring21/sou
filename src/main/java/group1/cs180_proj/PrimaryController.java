@@ -4,7 +4,7 @@ import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-
+import group1.cs180_proj.Http;
 public class PrimaryController {
 
     @FXML
@@ -15,8 +15,9 @@ public class PrimaryController {
 
     
     @FXML
-    private void handleButtonAction(){
+    private void handleButtonAction() throws IOException{
         //Add function to send "hello" to server here
+        Http.sendHello();
     }
     
     @FXML
