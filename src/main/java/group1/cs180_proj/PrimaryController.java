@@ -4,20 +4,35 @@ import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import group1.cs180_proj.Http;
+
+
 public class PrimaryController {
 
     @FXML
-    private Button hello_btn;
+    private Button hello_btn, connect_btn;
     @FXML
     private TextField textfield;
     
-
+    private Http http;
     
     @FXML
-    private void handleButtonAction() throws IOException{
+    private void handleConnectBtn() throws IOException{
         //Add function to send "hello" to server here
-        Http.sendHello();
+      
+            http = new Http();
+        
+        
+    }
+    
+    @FXML
+    private void handleHelloBtn() throws IOException{
+        //Add function to send "hello" to server here
+        
+            http.sendMessage("Hello");
+            while(http.getReturnString() == "");
+            setText(http.getReturnString());
+        
+        
     }
     
     @FXML
@@ -31,8 +46,4 @@ public class PrimaryController {
     }
     
     
-    @FXML
-    public void HelloText(){
-        textfield.setText("Hello");
-    }
 }
