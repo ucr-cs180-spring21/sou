@@ -53,8 +53,9 @@
     <AnchorPane id="btn_hello" maxHeight="-1.0" maxWidth="-1.0" prefHeight="335.0" prefWidth="591.0" VBox.vgrow="ALWAYS">
       <children>
             <TextField id="textarea_chat" fx:id="textfield" accessibleRole="TEXT_AREA" editable="false" layoutX="152.0" layoutY="29.0" prefHeight="143.0" prefWidth="283.0" scaleShape="false" text="Chat" />
-            <Button id="btn_hello" fx:id="hello_btn" layoutX="325.0" layoutY="248.0" mnemonicParsing="false" onMouseClicked="#handleHelloBtn" text="Send 'Hello'" />
-            <Button fx:id="connect_btn" layoutX="183.0" layoutY="248.0" mnemonicParsing="false" onMouseClicked="#handleConnectBtn" text="Connect" />
+            <Button id="btn_hello" fx:id="hello_btn" layoutX="254.0" layoutY="248.0" mnemonicParsing="false" onMouseClicked="#handleHelloBtn" text="Send 'Hello'" />
+            <Button fx:id="connect_btn" layoutX="152.0" layoutY="248.0" mnemonicParsing="false" onMouseClicked="#handleConnectBtn" text="Connect" />
+            <Button fx:id="disconnect_btn" layoutX="374.0" layoutY="248.0" mnemonicParsing="false" onMouseClicked="#handleDisconnectBtn" text="Disconnect" />
       </children>
     </AnchorPane>
   </children>

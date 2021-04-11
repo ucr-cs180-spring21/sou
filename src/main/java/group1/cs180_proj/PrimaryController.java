@@ -36,6 +36,15 @@ public class PrimaryController {
     }
     
     @FXML
+    private void handleDisconnectBtn() throws IOException{
+        //Add function to send "hello" to server here
+        
+            http.closeConnection();
+        
+        
+    }
+    
+    @FXML
     public void setText(String v){
         textfield.setText(v);
     }
