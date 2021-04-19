@@ -4,4 +4,5 @@ module group1.cs180_proj {
 
     opens group1.cs180_proj to javafx.fxml;
     exports group1.cs180_proj;
+    requires org.apache.commons.lang3;
 }
