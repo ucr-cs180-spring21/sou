@@ -1,9 +1,29 @@
-var net = require('net');
+//var net = require('net');
+const fs = require('fs');
+const express = require('express');
+const app = express();
+const host = "127.0.0.1";
+const port = 3000;
+const path = '\\public';
 
-var HOST = "127.0.0.1";
-var PORT = 3000;
+fs.readdir(__dirname + path, (err,files) =>{
+	
+	files.forEach(file =>{
+		fs.writeFile('./public/files.txt', file, function(err) {
+			if(err) console.log(err);
+		});
+	});
+	
+});
 
-net.createServer( function(sock) {
+app.get('/', (req, res) => {
+    res.send('Hello World!');
+});
+app.use('/public', express.static(__dirname + '/public'));
+app.listen(port, ()=> console.log('listening on port: ' + port));
+
+
+/**net.createServer( function(sock) {
    
     console.log( 'CONNECTED: ' + sock.remoteAdress + ':' + sock.remotePort);
 
@@ -22,3 +42,4 @@ net.createServer( function(sock) {
 }).listen(PORT, HOST);
 
 console.log( 'Server listening on ' + HOST + ':' + PORT);
+**/
