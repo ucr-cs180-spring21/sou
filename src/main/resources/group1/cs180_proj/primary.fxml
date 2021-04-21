@@ -18,7 +18,10 @@
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
-            <MenuItem fx:id="connect" mnemonicParsing="false" onAction="#handleConnectBtn" text="Connect" />
+            <MenuItem mnemonicParsing="false" onAction="#handleDownloadBtn" text="Download" />
+            <MenuItem mnemonicParsing="false" onAction="#handleLoadBtn" text="Load" />
+            <MenuItem mnemonicParsing="false" onAction= "#handleBackupBtn" text ="Backup"/>
+            <MenuItem mnemonicParsing="false" onAction= "#handleImportBtn" text="Import" />
             <MenuItem mnemonicParsing="false" onAction="#quit" text="Quit" />
           </items>
         </Menu>
@@ -26,15 +29,11 @@
     </MenuBar>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="931.0" prefWidth="964.0" VBox.vgrow="ALWAYS">
          <children>
-            <ChoiceBox fx:id="dataset_choice" layoutX="405.0" layoutY="-5.0" prefWidth="150.0" />
-            <Label layoutX="266.0" layoutY="-6.0" prefHeight="25.0" prefWidth="101.0" text="Select Dataset:" />
             <Label layoutX="49.0" layoutY="439.0" prefHeight="25.0" prefWidth="136.0" text="Select Column to Search:" />
             <TextField fx:id="search_textfield" layoutX="384.0" layoutY="439.0" />
             <Label layoutX="49.0" layoutY="778.0" prefHeight="25.0" prefWidth="71.0" text="Busiest Time:" />
             <Button fx:id="search_btn" layoutX="545.0" layoutY="439.0" mnemonicParsing="false" onMouseClicked="#handleSearchBtn" text="Search" />
-            <Button fx:id="download_btn" layoutX="625.0" layoutY="-5.0" mnemonicParsing="false" onMouseClicked="#handleDownloadBtn" text="Download" />
-            <Button fx:id="load_btn" layoutX="723.0" layoutY="-6.0" mnemonicParsing="false" onMouseClicked="#handleLoadBtn" prefHeight="25.0" prefWidth="52.0" text="Load" />
-            <ListView fx:id="listview_dataset" layoutX="35.0" layoutY="40.0" prefHeight="307.0" prefWidth="904.0" />
+            <ListView fx:id="listview_dataset" layoutX="35.0" layoutY="5.0" prefHeight="342.0" prefWidth="904.0" />
             <ChoiceBox fx:id="column_choice" layoutX="191.0" layoutY="439.0" prefWidth="150.0" />
             <ListView fx:id="listview_results" layoutX="33.0" layoutY="488.0" prefHeight="268.0" prefWidth="904.0" />
             <Label layoutX="644.0" layoutY="434.0" prefHeight="36.0" prefWidth="71.0" text="Occurrences:" />
@@ -49,6 +48,11 @@
             <TextField fx:id="busiestPickup_textfield" layoutX="439.0" layoutY="778.0" prefHeight="25.0" prefWidth="239.0" />
             <Label layoutX="696.0" layoutY="782.0" text="Earliest Pickup Time:" />
             <TextField fx:id="earliestTime_textfield" layoutX="812.0" layoutY="778.0" prefHeight="25.0" prefWidth="95.0" />
+            <Button layoutX="860.0" layoutY="439.0" mnemonicParsing="false" onMouseClicked="#handleClearBtn" text="Clear" />
+            <Button layoutX="635.0" layoutY="365.0" mnemonicParsing="false" onMouseClicked="#handleInsertBtn" text="Insert" />
+            <Button layoutX="708.0" layoutY="365.0" mnemonicParsing="false" onMouseClicked="#handleUpdateBtn" text="Update" />
+            <Button layoutX="783.0" layoutY="365.0" mnemonicParsing="false" onMouseClicked="#handleRemoveBtn" text="Remove" />
+            <Button layoutX="860.0" layoutY="365.0" mnemonicParsing="false" onMouseClicked="#handleReloadbtn" text="Reload" />
          </children>
     </AnchorPane>
   </children>

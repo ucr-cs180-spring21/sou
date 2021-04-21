@@ -6,15 +6,6 @@ const host = "127.0.0.1";
 const port = 3000;
 const path = '\\public';
 
-fs.readdir(__dirname + path, (err,files) =>{
-	
-	files.forEach(file =>{
-		fs.writeFile('./public/files.txt', file, function(err) {
-			if(err) console.log(err);
-		});
-	});
-	
-});
 
 app.get('/', (req, res) => {
     res.send('Hello World!');

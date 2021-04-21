@@ -5,11 +5,13 @@
  */
 package group1.cs180_proj;
 
+import java.io.Serializable;
+
 /**
  *
  * @author patri
  */
-public class Uber {
+public class Uber implements Serializable{
     private String date,time,state,pickup,address,street;
 
     public String getDate() {
