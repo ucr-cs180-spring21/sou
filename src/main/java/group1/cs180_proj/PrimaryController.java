@@ -10,6 +10,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -24,112 +25,69 @@ public class PrimaryController {
     @FXML
     private ListView listview_dataset, listview_results;
     @FXML
-    private TextField search_textfield, occurrences_textfield, busiestState_textfield, 
-            busiestStreet_textfield, busiestTime_textfield, busiestPickup_textfield,
-            earliestTime_textfield;
-    
+    private TextField search_textfield, occurrences_textfield;
+    @FXML
+    private TextArea analyze_textarea;
     private InsertController ic;
     private EditController ec;
     private ImportController imc;
     private BackupController bc;
     private Http http;
     private final String projDir = System.getProperty("user.dir");
-    public ArrayList<Uber> data;
-    private final String dataset = "dial7.csv";
     
-    public PrimaryController(){
+    private final String dataset = "dial7.csv";
+    ArrayList<String> results;
+    
+    public PrimaryController() throws IOException{
         ic = null;
         ec = null;
-    }
-    
-    public void setData(ArrayList<Uber> d){
-        data = d;
-    }
-    
-    @FXML
-    private void handleDownloadBtn() throws IOException, MalformedURLException, URISyntaxException{
-        Http http = new Http();
-        String choice = dataset;
-        http.downloadFile(choice);
-    }
-    
-    @FXML
-    private void handleLoadBtn() throws IOException, MalformedURLException, URISyntaxException{
-        String[] columns = {"Date", "Time", "State", "Pickup", "Address", "Street", "Full Address"}; 
-        data = Parse.parseCSV(projDir, dataset);
        
-      
-        for(int i = 1; i < data.size(); i++){
-            listview_dataset.getItems().add(data.get(i).toString());
-        }
-           
-        
-        column_choice.getItems().addAll((Object[]) columns);
-        Analysis anal = new Analysis(data);
-        Pair<Uber, Integer> res =  anal.findMaxOccurrenceState();
-        busiestState_textfield.setText(res.getKey().getState() + ", Occurrences: " + res.getValue());
-        res = anal.findMaxOccurrenceStreet();
-        busiestStreet_textfield.setText(res.getKey().getStreet() + ", Occurrences: " + res.getValue());
+    }
+    
+    public void setData(ArrayList<String> r){
+        results = r;
     }
     
     @FXML
-    private void handleSearchBtn() {
-        String column = column_choice.getSelectionModel().getSelectedItem().toString();
-        String search = search_textfield.getText();
-        ArrayList<Uber> results = null ;
-        Analysis anal = new Analysis(data);
+    private void handleLoadBtn() throws IOException{
+        String[] columns = {"Date", "Time", "State", "Pickup", "Address", "Street", "Full Address"}; 
+        column_choice.getItems().addAll((Object[]) columns);
+        http = new Http();
+    }
+    
+
+    
+    @FXML
+    private void handleSearchBtn() throws Exception {
+        String column = column_choice.getSelectionModel().getSelectedItem().toString().toLowerCase();
+        String search = search_textfield.getText().toUpperCase();
         
-        search = search.toUpperCase();
-        switch(column){
-            case "Date":
-                results = anal.searchDates(search);
-                break;
-            case "Time":
-                results = anal.searchTimes(search);
-                break;
-            case "State":
-                results = anal.searchStates(search);
-                break;
-            case "Pickup":
-                results = anal.searchPickups(search);
-                break;
-            case "Address":
-                results = anal.searchAddresses(search);
-                break;
-            case "Street":
-                results = anal.searchStreets(search);
-                break;
-            case "Full Address":
-                results = anal.searchFullAddresses(search);
-                break;
-            default:
-                break;
-        }
         
         try{
-            
+            results = http.getSearch(column, search);
             
             for(int i = 0; i < results.size(); i++){
-                listview_results.getItems().add(results.get(i).toString());
+                listview_results.getItems().add(results.get(i));
             }
         }
         catch(Exception e){
-            System.out.print(e);
+            System.out.print(e.getStackTrace());
         }
         
         occurrences_textfield.setText(String.valueOf(listview_results.getItems().size()));
-        Analysis anal2 = new Analysis(results);
-        Pair<Uber,Integer> res = anal2.findMaxOccurrenceTime();
-        busiestTime_textfield.setText(res.getKey().getTime() + ", Occurrences: " + res.getValue());
-        res = anal2.findMaxOccurrencePickup();
-        busiestPickup_textfield.setText(res.getKey().getPickup() + ", Occurrences: " + res.getValue());
-        String t = anal2.findEarliestTime();
-        earliestTime_textfield.setText(t);
+   
+        
+    }
+    @FXML
+    private void handleAnalysisBtn() throws Exception{
+        String res = http.getAnalysis();
+        analyze_textarea.setText(res);
     }
     
     @FXML
     private void handleClearBtn(){
         listview_results.getItems().clear();
+        occurrences_textfield.clear();
     }
     
     @FXML
@@ -137,7 +95,7 @@ public class PrimaryController {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Edit.fxml"));
             ic = new InsertController();
-            ic.setData(data);
+            //ic.setData(data);
             fxmlLoader.setController(ic);
             Parent root1 = (Parent) fxmlLoader.load();
             Stage stage = new Stage();
@@ -159,7 +117,7 @@ public class PrimaryController {
         
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Edit.fxml"));
-            ec = new EditController(data, listview_dataset.getSelectionModel().getSelectedIndex() + 1);
+            //ec = new EditController(data, listview_dataset.getSelectionModel().getSelectedIndex() + 1);
    
             fxmlLoader.setController(ec);
             Parent root1 = (Parent) fxmlLoader.load();
@@ -186,17 +144,17 @@ public class PrimaryController {
             //do nothing
         }
         else if(ic == null && ec != null){
-            data = ec.getData();
+           // results = ec.getData();
             ec = null;
         }
         else if(ec == null && ic != null){
-            data = ic.getData();
+          //  results = ic.getData();
             ic = null;
             
         }
         
-        for(int i = 1; i < data.size(); i++){
-             listview_dataset.getItems().add(data.get(i).toString());
+        for(int i = 1; i < results.size(); i++){
+             listview_dataset.getItems().add(results.get(i).toString());
         }
         
         
@@ -204,14 +162,14 @@ public class PrimaryController {
     
     @FXML
     private void handleRemoveBtn(){
-        data.remove(listview_dataset.getSelectionModel().getSelectedIndex() + 1);
+        
     }
     
     @FXML
     private void handleImportBtn(){
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Import.fxml"));
-            imc = new ImportController(data,this);
+            //imc = new ImportController(data,this);
    
             fxmlLoader.setController(imc);
             Parent root1 = (Parent) fxmlLoader.load();
@@ -234,7 +192,7 @@ public class PrimaryController {
     private void handleBackupBtn(){
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Backup.fxml"));
-            bc = new BackupController(data);
+            bc = new BackupController(results);
    
             fxmlLoader.setController(bc);
             Parent root1 = (Parent) fxmlLoader.load();

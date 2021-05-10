@@ -7,21 +7,21 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
 
-<VBox alignment="CENTER" prefHeight="873.0" prefWidth="965.0" spacing="20.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="group1.cs180_proj.PrimaryController">
+<VBox alignment="CENTER" prefHeight="742.0" prefWidth="970.0" spacing="20.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="group1.cs180_proj.PrimaryController">
  <children>
     <MenuBar fx:id="menubar" prefHeight="0.0" prefWidth="966.0" VBox.vgrow="NEVER">
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
-            <MenuItem mnemonicParsing="false" onAction="#handleDownloadBtn" text="Download" />
             <MenuItem mnemonicParsing="false" onAction="#handleLoadBtn" text="Load" />
-            <MenuItem mnemonicParsing="false" onAction= "#handleBackupBtn" text ="Backup"/>
-            <MenuItem mnemonicParsing="false" onAction= "#handleImportBtn" text="Import" />
+            <MenuItem mnemonicParsing="false" onAction="#handleBackupBtn" text="Backup" />
+            <MenuItem mnemonicParsing="false" onAction="#handleImportBtn" text="Import" />
             <MenuItem mnemonicParsing="false" onAction="#quit" text="Quit" />
           </items>
         </Menu>
@@ -29,30 +29,21 @@
     </MenuBar>
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="931.0" prefWidth="964.0" VBox.vgrow="ALWAYS">
          <children>
-            <Label layoutX="49.0" layoutY="439.0" prefHeight="25.0" prefWidth="136.0" text="Select Column to Search:" />
-            <TextField fx:id="search_textfield" layoutX="384.0" layoutY="439.0" />
-            <Label layoutX="49.0" layoutY="778.0" prefHeight="25.0" prefWidth="71.0" text="Busiest Time:" />
-            <Button fx:id="search_btn" layoutX="545.0" layoutY="439.0" mnemonicParsing="false" onMouseClicked="#handleSearchBtn" text="Search" />
-            <ListView fx:id="listview_dataset" layoutX="35.0" layoutY="5.0" prefHeight="342.0" prefWidth="904.0" />
-            <ChoiceBox fx:id="column_choice" layoutX="191.0" layoutY="439.0" prefWidth="150.0" />
-            <ListView fx:id="listview_results" layoutX="33.0" layoutY="488.0" prefHeight="268.0" prefWidth="904.0" />
-            <Label layoutX="644.0" layoutY="434.0" prefHeight="36.0" prefWidth="71.0" text="Occurrences:" />
-            <TextField fx:id="occurrences_textfield" layoutX="722.0" layoutY="439.0" prefHeight="25.0" prefWidth="112.0" />
-            <Line endX="681.0" layoutX="259.0" layoutY="406.0" startX="-219.0" />
-            <Label layoutX="53.0" layoutY="365.0" prefHeight="25.0" prefWidth="81.0" text="Busiest State:" />
-            <TextField fx:id="busiestState_textfield" layoutX="138.0" layoutY="365.0" />
-            <Label layoutX="314.0" layoutY="365.0" prefHeight="25.0" prefWidth="81.0" text="Busiest Street:" />
-            <TextField fx:id="busiestStreet_textfield" layoutX="406.0" layoutY="365.0" prefHeight="25.0" prefWidth="191.0" />
-            <TextField fx:id="busiestTime_textfield" layoutX="128.0" layoutY="778.0" />
-            <Label layoutX="303.0" layoutY="782.0" text="Busiest Pickup Location:" />
-            <TextField fx:id="busiestPickup_textfield" layoutX="439.0" layoutY="778.0" prefHeight="25.0" prefWidth="239.0" />
-            <Label layoutX="696.0" layoutY="782.0" text="Earliest Pickup Time:" />
-            <TextField fx:id="earliestTime_textfield" layoutX="812.0" layoutY="778.0" prefHeight="25.0" prefWidth="95.0" />
-            <Button layoutX="860.0" layoutY="439.0" mnemonicParsing="false" onMouseClicked="#handleClearBtn" text="Clear" />
-            <Button layoutX="635.0" layoutY="365.0" mnemonicParsing="false" onMouseClicked="#handleInsertBtn" text="Insert" />
-            <Button layoutX="708.0" layoutY="365.0" mnemonicParsing="false" onMouseClicked="#handleUpdateBtn" text="Update" />
-            <Button layoutX="783.0" layoutY="365.0" mnemonicParsing="false" onMouseClicked="#handleRemoveBtn" text="Remove" />
-            <Button layoutX="860.0" layoutY="365.0" mnemonicParsing="false" onMouseClicked="#handleReloadbtn" text="Reload" />
+            <Label layoutX="42.0" layoutY="19.0" prefHeight="25.0" prefWidth="150.0" text="Select Column to Search:" />
+            <TextField fx:id="search_textfield" layoutX="391.0" layoutY="19.0" />
+            <Button fx:id="search_btn" layoutX="552.0" layoutY="19.0" mnemonicParsing="false" onMouseClicked="#handleSearchBtn" text="Search" />
+            <ChoiceBox fx:id="column_choice" layoutX="198.0" layoutY="19.0" prefWidth="150.0" />
+            <ListView fx:id="listview_results" layoutX="31.0" layoutY="71.0" prefHeight="268.0" prefWidth="904.0" />
+            <Label layoutX="632.0" layoutY="14.0" prefHeight="36.0" prefWidth="90.0" text="Occurrences:" />
+            <TextField fx:id="occurrences_textfield" layoutX="729.0" layoutY="19.0" prefHeight="25.0" prefWidth="112.0" />
+            <Line endX="681.0" layoutX="257.0" layoutY="425.0" startX="-219.0" />
+            <Button layoutX="867.0" layoutY="19.0" mnemonicParsing="false" onMouseClicked="#handleClearBtn" text="Clear" />
+            <Button layoutX="95.0" layoutY="365.0" mnemonicParsing="false" onMouseClicked="#handleInsertBtn" prefHeight="40.0" prefWidth="125.0" text="Insert" />
+            <Button layoutX="320.0" layoutY="365.0" mnemonicParsing="false" onMouseClicked="#handleUpdateBtn" prefHeight="40.0" prefWidth="125.0" text="Update" />
+            <Button layoutX="538.0" layoutY="365.0" mnemonicParsing="false" onMouseClicked="#handleRemoveBtn" prefHeight="40.0" prefWidth="125.0" text="Remove" />
+            <Button layoutX="750.0" layoutY="365.0" mnemonicParsing="false" onMouseClicked="#handleReloadbtn" prefHeight="40.0" prefWidth="125.0" text="Reload" />
+            <TextArea fx:id="analyze_textarea" layoutX="33.0" layoutY="514.0" prefHeight="135.0" prefWidth="901.0" promptText="Analytics" />
+            <Button fx:id="analyze_btn" layoutX="390.0" layoutY="453.0" mnemonicParsing="false" onMouseClicked="#handleAnalysisBtn" prefHeight="36.0" prefWidth="190.0" text="Analyze" />
          </children>
     </AnchorPane>
   </children>

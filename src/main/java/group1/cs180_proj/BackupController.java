@@ -18,11 +18,11 @@ import javafx.stage.Stage;
  */
 public class BackupController  {
 
-    private ArrayList<Uber> data;
+    private ArrayList<String> data;
     @FXML
     private TextField backup_textfield;
     
-    public BackupController(ArrayList<Uber> d){
+    public BackupController(ArrayList<String> d){
         data = d;
     }
     @FXML

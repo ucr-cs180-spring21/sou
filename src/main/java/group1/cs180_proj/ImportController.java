@@ -21,10 +21,10 @@ public class ImportController  {
    private ListView listview_import;
    
    private FileIO fio;
-   private ArrayList<Uber> data;
+   private ArrayList<String> data;
    private PrimaryController pc;
    
-   public ImportController(ArrayList<Uber> d, PrimaryController p){
+   public ImportController(ArrayList<String> d, PrimaryController p){
        data = d;
        pc = p;
    }
@@ -43,7 +43,7 @@ public class ImportController  {
        String selection = listview_import.getSelectionModel().getSelectedItem().toString();
        System.out.println(selection);
        data = fio.importData(selection);
-       pc.setData(data);
+      // pc.setData(data);
        Stage stage = (Stage) listview_import.getScene().getWindow();
        stage.close();
    }

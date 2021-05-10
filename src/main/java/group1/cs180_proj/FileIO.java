@@ -19,10 +19,10 @@ import java.util.ArrayList;
  * @author patri
  */
 public class FileIO {
-    ArrayList<Uber> data;
+    ArrayList<String> data;
     private final String projDir = System.getProperty("user.dir");
     
-    public FileIO(ArrayList<Uber> d){
+    public FileIO(ArrayList<String> d){
         data = d;
     }
     
@@ -76,14 +76,14 @@ public class FileIO {
         return ret;
     }
   
-    public ArrayList<Uber> importData(String file){
-        ArrayList<Uber> ret = new ArrayList<Uber>();
+    public ArrayList<String> importData(String file){
+        ArrayList<String> ret = new ArrayList();
         
         try{
             FileInputStream fi = new FileInputStream(file);
             ObjectInputStream oi = new ObjectInputStream(fi);
 
-            ret = (ArrayList<Uber>) oi.readObject();
+            ret = (ArrayList<String>) oi.readObject();
             oi.close();
            
         }catch (Exception e) {

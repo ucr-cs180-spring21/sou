@@ -16,7 +16,7 @@ import javafx.stage.Stage;
  * @author patri
  */
 public class EditController {
-    ArrayList<Uber> data;
+    ArrayList<String> data;
     int index;
     
     @FXML
@@ -25,27 +25,27 @@ public class EditController {
     @FXML
     private Button save_insert_btn;
     
-    public EditController(ArrayList<Uber> d, int i){
+    public EditController(ArrayList<String> d, int i){
         data = d;
         index = i;
         
     }
     
     public void populate(){
-        Uber u = data.get(index);
-        date_textfield.setText(u.getDate());
-        time_textfield.setText(u.getTime());
-        state_textfield.setText(u.getState());
-        pickup_textfield.setText(u.getPickup());
-        address_textfield.setText(u.getAddress());
-        street_textfield.setText(u.getStreet());
+        //Uber u = data.get(index);
+       // date_textfield.setText(u.getDate());
+       // time_textfield.setText(u.getTime());
+       // state_textfield.setText(u.getState());
+       // pickup_textfield.setText(u.getPickup());
+       // address_textfield.setText(u.getAddress());
+       // street_textfield.setText(u.getStreet());
     }
     public void setData(ArrayList<Uber> d){
-        data = d;
+        //data = d;
     }
-    public ArrayList<Uber> getData(){
-        return data;
-    }
+   // public ArrayList<Uber> getData(){
+        //return data;
+   // }
     
    
     
@@ -58,7 +58,7 @@ public class EditController {
             Uber entry = new Uber(date_textfield.getText(), time_textfield.getText(), state_textfield.getText(), 
                     pickup_textfield.getText(), address_textfield.getText(), street_textfield.getText());
             
-            data.set(index, entry);
+            //data.set(index, entry);
             
             Stage stage = (Stage) save_insert_btn.getScene().getWindow();
             stage.close();
