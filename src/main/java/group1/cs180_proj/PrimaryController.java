@@ -23,7 +23,7 @@ public class PrimaryController {
     @FXML
     private ChoiceBox column_choice;
     @FXML
-    private ListView listview_dataset, listview_results;
+    private ListView listview_results;
     @FXML
     private TextField search_textfield, occurrences_textfield;
     @FXML
@@ -36,7 +36,7 @@ public class PrimaryController {
     private final String projDir = System.getProperty("user.dir");
     
     private final String dataset = "dial7.csv";
-    ArrayList<String> results;
+    ArrayList<Uber> data;
     
     public PrimaryController() throws IOException{
         ic = null;
@@ -44,13 +44,24 @@ public class PrimaryController {
        
     }
     
-    public void setData(ArrayList<String> r){
-        results = r;
+    public void setData(ArrayList<Uber> r){
+        data = r;
     }
     
+    public ArrayList<Uber> getData(){
+        return data;
+    }
+    
+    public void addData(Uber u){
+        data.add(u);
+    }
+    
+    public void updateData(Uber u, int i){
+        data.set(i, u);
+    }
     @FXML
     private void handleLoadBtn() throws IOException{
-        String[] columns = {"Date", "Time", "State", "Pickup", "Address", "Street", "Full Address"}; 
+        String[] columns = {"Date", "Time", "State", "Pickup", "Address", "Street", "Full Address", "All"}; 
         column_choice.getItems().addAll((Object[]) columns);
         http = new Http();
     }
@@ -64,10 +75,10 @@ public class PrimaryController {
         
         
         try{
-            results = http.getSearch(column, search);
+            data = http.getSearch(column, search);
             
-            for(int i = 0; i < results.size(); i++){
-                listview_results.getItems().add(results.get(i));
+            for(int i = 0; i < data.size(); i++){
+                listview_results.getItems().add(data.get(i).toString());
             }
         }
         catch(Exception e){
@@ -88,13 +99,14 @@ public class PrimaryController {
     private void handleClearBtn(){
         listview_results.getItems().clear();
         occurrences_textfield.clear();
+        analyze_textarea.clear();
     }
     
     @FXML
     private void handleInsertBtn(){
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Edit.fxml"));
-            ic = new InsertController();
+            ic = new InsertController(this);
             //ic.setData(data);
             fxmlLoader.setController(ic);
             Parent root1 = (Parent) fxmlLoader.load();
@@ -117,7 +129,7 @@ public class PrimaryController {
         
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Edit.fxml"));
-            //ec = new EditController(data, listview_dataset.getSelectionModel().getSelectedIndex() + 1);
+            ec = new EditController(this, listview_results.getSelectionModel().getSelectedIndex() + 1);
    
             fxmlLoader.setController(ec);
             Parent root1 = (Parent) fxmlLoader.load();
@@ -137,39 +149,33 @@ public class PrimaryController {
     }
     
     @FXML
-    private void handleReloadbtn(){
-        listview_dataset.getItems().clear();
+    public void handleReloadbtn(){
         
-        if(ic == null && ec == null){
-            //do nothing
-        }
-        else if(ic == null && ec != null){
-           // results = ec.getData();
-            ec = null;
-        }
-        else if(ec == null && ic != null){
-          //  results = ic.getData();
-            ic = null;
-            
+        
+        handleClearBtn();
+        
+        for(int i = 1; i < data.size(); i++){
+             listview_results.getItems().add(data.get(i).toString());
         }
         
-        for(int i = 1; i < results.size(); i++){
-             listview_dataset.getItems().add(results.get(i).toString());
-        }
-        
+         occurrences_textfield.setText(String.valueOf(listview_results.getItems().size()));
         
     }
     
     @FXML
-    private void handleRemoveBtn(){
+    private void handleRemoveBtn() throws Exception{
+        int index = listview_results.getSelectionModel().getSelectedIndex()+1;
+        http.postRemove(data.get(index).getID());
+        data.remove(index);
         
+        handleReloadbtn();
     }
     
     @FXML
     private void handleImportBtn(){
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Import.fxml"));
-            //imc = new ImportController(data,this);
+            imc = new ImportController(this);
    
             fxmlLoader.setController(imc);
             Parent root1 = (Parent) fxmlLoader.load();
@@ -192,7 +198,7 @@ public class PrimaryController {
     private void handleBackupBtn(){
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Backup.fxml"));
-            bc = new BackupController(results);
+            bc = new BackupController(this);
    
             fxmlLoader.setController(bc);
             Parent root1 = (Parent) fxmlLoader.load();

@@ -1,6 +1,7 @@
 const fs = require('fs');
 const readline = require('readline');
 var stream = require('stream');
+const { PerformanceObserver, performance } = require('perf_hooks');
 
 const express = require('express');
 const { send } = require('process');
@@ -10,6 +11,8 @@ const port = 3000;
 
 const pathCSV = 'dial7.csv';
 var data = [];
+var busiestDate = new Map(), busiestPickup = new Map(), busiestState = new Map(),
+    busiestStreet = new Map(), earliestTime, latestTime, busiestTime;
 var lastRequest;
 var instream;
 var outstream;
@@ -24,19 +27,119 @@ app.get('/', (req, res) => {
 })
 
 app.get('/search/', (req,res) => {
+    var ret;
     console.log('Request received: ' + req.header('column') + ', ' + req.header('entry'));
-    const column = req.header('column');
-    const entry = req.header('entry');
-    var ret = search(data,column,entry);
+    
+    if(req.header('column') == 'all'){
+        var anal;
+        ret = data;
+        var t0 = performance.now();
+        /* 
+        //uncomment for slow analysis
+        
+        lastRequest = analysis(ret);
+        
+        */
+
+
+        if(busiestDate.size == 0){
+            busiestDate = mode0(ret,'date');
+            busiestTime = mode0(ret, 'time');
+            busiestPickup = mode0(ret,'pickup');
+            busiestState = mode0(ret,'state');
+            busiestStreet = mode0(ret,'street');
+            earliestTime = findEarliestTime(ret);
+            latestTime = findLatestTime(ret);
+
+        }
+        anal = new Analysis( 'Busiest Date: ' + busiestDate['max'] + ' | Occurrences: ' + busiestDate[busiestDate['max']], 
+                    'Busiest time: ' + busiestTime['max'] + ' | Occurrences: ' + busiestTime[busiestTime['max']], 
+                    'Busiest state: ' + busiestState['max'] + ' | Occurrences: ' + busiestState[busiestState['max']], 
+                    'Busiest pickup: ' + busiestPickup['max'] + ' | Occurrences: ' + busiestPickup[busiestPickup['max']], 
+                    'Busiest street: ' + busiestStreet['max'] + ' | occurrences: ' + busiestStreet[busiestStreet['max']], 
+                    earliestTime, latestTime);
+        lastRequest = anal;
+        var t1 = performance.now();
+        console.log('Time taken to execute analysis: ' + (t1-t0).toString());
+    
+    }
+    else{
+        const column = req.header('column');
+         const entry = req.header('entry');
+        ret = search(data,column,entry);
+        lastRequest = analysis(ret);
+    } 
 
     res.send(JSON.stringify(ret));
-    lastRequest = analysis(ret);
+    
    
 })
 
 app.get('/analysis/', (req,res) => {
     console.log('Analysis request received for last search.');
     res.send(JSON.stringify(lastRequest));
+})
+
+app.post('/insert/', (req,res) =>{
+    console.log('Insert request received.');
+    var u = new Uber(req.header('date'), req.header('time'), req.header('state'), req.header('pickup'), 
+                req.header('address'), req.header('street'), (data.length+1).toString() );
+    
+    data.push(u);
+    res.send(data.length.toString());
+    increment('date', req.header('date'));
+    increment('time', req.header('time'));
+    increment('state', req.header('state'));
+    increment('pickup', req.header('pickup'));
+    increment('address', req.header('address'));
+    increment('street', req.header('street'));
+})
+
+app.post('/edit/', (req,res) =>{
+    console.log('Edit request received.');
+    if(req.header('date') != data[req.header('id').date]){
+        decrement('date', data[req.header('id')].date);
+        increment('date', req.header('date'));
+    }
+    if(req.header('time') != data[req.header('id').time]){
+        decrement('time', data[req.header('id')].time);
+        increment('time', req.header('time'));
+    }
+    if(req.header('state') != data[req.header('id').state]){
+        decrement('state', data[req.header('id')].state);
+        increment('state', req.header('state'));
+    }
+    if(req.header('pickup') != data[req.header('id').pickup]){
+        decrement('pickup', data[req.header('id')].pickup);
+        increment('pickup', req.header('pickup'));
+    }
+    if(req.header('address') != data[req.header('id').address]){
+        decrement('address', data[req.header('id')].address);
+        increment('address', req.header('address'));
+    }
+    if(req.header('street') != data[req.header('id').street]){
+        decrement('street', data[req.header('id')].street);
+        increment('street', req.header('street'));
+    }
+    data[req.header('id')] = new Uber(req.header('date'), req.header('time'), req.header('state'), req.header('pickup'), 
+                req.header('address'), req.header('street'), req.header('id') );
+
+    res.send("Success");
+    
+    
+})
+
+app.post('/remove/', (req,res) =>{
+    console.log('Remove request received.');
+    data[req.header('index')] = null;
+    res.send("Success");
+    decrement('date', req.header('date'));
+    decrement('time', req.header('time'));
+    decrement('state', req.header('state'));
+    decrement('pickup', req.header('pickup'));
+    decrement('address', req.header('address'));
+    decrement('street', req.header('street'));
+    
 })
   
 app.listen(port, () => {
@@ -56,17 +159,16 @@ class Uber{
     address;
     street;
     fulladdress;
-    entry;
-    constructor(date,time,state,pickup,address,street){
+    id;
+    constructor(date,time,state,pickup,address,street, id){
         this.date = date;
         this.time = time;
         this.state = state;
         this.pickup = pickup;
         this.address = address;
         this.street = street;
+        this.id = id;
         this.fulladdress = address + ' ' + street;
-        this.entry = this.date + ' ' + this.time + ' ' + this.state + ' ' + this.pickup + ' '
-            + this.address + ' ' + this.street;
 
     }
 
@@ -126,7 +228,7 @@ function parseCSV(){
             
         }
         var uber = new Uber(splitLine[0].replace("\\s{2,}", " ").trim(), splitLine[1].replace("\\s{2,}", " ").trim(), splitLine[2].replace("\\s{2,}", " ").trim(),
-            splitLine[3].replace("\\s{2,}", " ").trim(), splitLine[4].replace("\\s{2,}", " ").trim(), splitLine[5].replace("\\s{2,}", " ").trim());
+            splitLine[3].replace("\\s{2,}", " ").trim(), splitLine[4].replace("\\s{2,}", " ").trim(), splitLine[5].replace("\\s{2,}", " ").trim(), ret.length.toString());
         console.log
         ret.push(uber);
 
@@ -321,6 +423,103 @@ function findLatestTime(arr){
     return 'Busiest ' + column + ': ' + maxEl + ' | Occurrences: ' + maxCount;
 }
 
+function mode0(array, column)
+{
+    
+    if(array.length == 0)
+    return null;
+    var modeMap = {};
+    var maxEl = array[0], maxCount = 1;
+
+    switch(column){
+        case "date":
+            for(var i = 0; i < array.length; i++)
+            {
+                var el = array[i].date;
+                if(modeMap[el] == null)
+                    modeMap[el] = 1;
+                else
+                    modeMap[el]++;  
+                if(modeMap[el] > maxCount)
+                {
+                    maxEl = el;
+                    maxCount = modeMap[el];
+                }
+            }
+            break;
+        case "time":
+            for(var i = 0; i < array.length; i++)
+            {
+                var el = array[i].time;
+                if(modeMap[el] == null)
+                    modeMap[el] = 1;
+                else
+                    modeMap[el]++;  
+                if(modeMap[el] > maxCount)
+                {
+                    maxEl = el;
+                    maxCount = modeMap[el];
+                }
+            }
+            break;
+        case "state":
+            for(var i = 0; i < array.length; i++)
+            {
+                var el = array[i].state;
+                if(modeMap[el] == null)
+                    modeMap[el] = 1;
+                else
+                    modeMap[el]++;  
+                if(modeMap[el] > maxCount)
+                {
+                    maxEl = el;
+                    maxCount = modeMap[el];
+                }
+            }
+            break;
+        case "pickup":
+            for(var i = 0; i < array.length; i++)
+            {
+                var el = array[i].pickup;
+                if(modeMap[el] == null)
+                    modeMap[el] = 1;
+                else
+                    modeMap[el]++;  
+                if(modeMap[el] > maxCount)
+                {
+                    maxEl = el;
+                    maxCount = modeMap[el];
+                }
+            }
+            break;
+
+        case "street":
+            for(var i = 0; i < array.length; i++)
+            {
+                var el = array[i].street;
+                if(modeMap[el] == null)
+                    modeMap[el] = 1;
+                else
+                    modeMap[el]++;  
+                if(modeMap[el] > maxCount)
+                {
+                    maxEl = el;
+                    maxCount = modeMap[el];
+                }
+            }
+            break;
+
+        default:
+            break;
+     }
+   
+     modeMap['max'] = maxEl;
+    
+    
+     return modeMap;
+    ;
+}
+
 function analysis(arr){
 
     var anal = new Analysis( 
@@ -328,4 +527,84 @@ function analysis(arr){
         mode(arr, "pickup"), mode(arr, "street"), findEarliestTime(arr), findLatestTime(arr) 
         );
     return anal;
+}
+
+function increment(column, key){
+    
+    switch(column){
+        case "date":
+            busiestDate[key] += 1;
+            if(busiestDate[key] > busiestDate['max']){
+                busiestDate['max'] = key;
+            }
+            break;
+        case "time":
+            busiestTime[key] += 1;
+            if(busiestTime[key] > busiestTime['max']){
+                busiestTime['max'] = key;
+            }
+            break;
+        case "state":
+            busiestState[key] += 1;
+            if(busiestState[key] > busiestState['max']){
+                busiestState['max'] = key;
+            }
+            break;
+        case "pickup":
+            busiestPickup[key] += 1;
+            if(busiestPickup[key] > busiestPickup['max']){
+                busiestPickup['max'] = key;
+            }
+            break;
+            
+        case "street":
+            busiestStreet[key] += 1;
+            if(busiestStreet[key] > busiestStreet['max']){
+                busiestStreet['max'] = key;
+            }
+            break;
+
+        default:
+            break;
+     }
+}
+
+function decrement(column, key){
+    
+    switch(column){
+        case "date":
+            busiestDate[key] -= 1;
+            if(busiestDate[key] > busiestDate['max']){
+                busiestDate['max'] = key;
+            }
+            break;
+        case "time":
+            busiestTime[key] -= 1;
+            if(busiestTime[key] > busiestTime['max']){
+                busiestTime['max'] = key;
+            }
+            break;
+        case "state":
+            busiestState[key] -= 1;
+            if(busiestState[key] > busiestState['max']){
+                busiestState['max'] = key;
+            }
+            break;
+        case "pickup":
+            busiestPickup[key] -= 1;
+            if(busiestPickup[key] > busiestPickup['max']){
+                busiestPickup['max'] = key;
+            }
+            break;
+            
+        case "street":
+            busiestStreet[key] -= 1;
+            if(busiestStreet[key] > busiestStreet['max']){
+                busiestStreet['max'] = key;
+            }
+            break;
+
+        default:
+            break;
+     }
 }

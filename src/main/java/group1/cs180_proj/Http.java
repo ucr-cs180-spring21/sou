@@ -24,9 +24,9 @@ public class Http {
 
    
    
-   public  ArrayList<String> getSearch(String column, String entry) throws Exception {
+   public  ArrayList<Uber> getSearch(String column, String entry) throws Exception {
        String ip = "http://localhost:3000/search/";
-       ArrayList<String> ret = new ArrayList();
+       ArrayList<Uber> ret = new ArrayList();
        URL url = new URL(ip);
        HttpURLConnection con = (HttpURLConnection) url.openConnection();
 //       con.setRequestMethod("GET");
@@ -45,15 +45,25 @@ public class Http {
         // print response body
         //System.out.println(response.body());
         JSONArray jsonarray = new JSONArray(response.toString());
+        
+        try{
         for (int i = 0; i < jsonarray.length(); i++) {
             JSONObject jsonobject = jsonarray.getJSONObject(i);
-            String e = jsonobject.getString("entry");
-            ret.add(e);
+         
+            Uber u = new Uber(jsonobject.getString("date"), jsonobject.getString("time"), jsonobject.getString("state"), 
+                    jsonobject.getString("pickup"), jsonobject.getString("address"), jsonobject.getString("street"), jsonobject.getString("id"));
+       
+          
+            ret.add(u);
         }
         
-        return ret;
- 
-        
+           
+       
+        }
+        catch(Exception e){
+                System.out.print(e.getMessage());
+                }
+         return ret;
     }
      public  String getAnalysis() throws Exception {
        String ip = "http://localhost:3000/analysis/";
@@ -84,5 +94,99 @@ public class Http {
         
     }
  
+     public  Uber postInsert(Uber u) throws Exception {
+       String ip = "http://localhost:3000/insert/";
+
+       URL url = new URL(ip);
+       HttpURLConnection con = (HttpURLConnection) url.openConnection();
+       con.setRequestMethod("POST");
+       con.setRequestProperty("date", u.getDate());
+       con.setRequestProperty("time", u.getTime());
+       con.setRequestProperty("state", u.getState());
+       con.setRequestProperty("pickup", u.getPickup());
+       con.setRequestProperty("address", u.getAddress());
+       con.setRequestProperty("street", u.getStreet());
+       con.setDoOutput(true);
+       BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+        while ((inputLine = in.readLine()) != null) {
+        	response.append(inputLine);
+        }
+        in.close();// print status code
+        //System.out.println(response.statusCode());
+
+        // print response body
+        //System.out.println(response.body());
+        String i = response.toString();
+        Uber temp = new Uber(u);
+        temp.setID(i);
+        
+        return temp;
+ 
+        
+    }
+     public  void postEdit(Uber u) throws Exception {
+       String ip = "http://localhost:3000/edit/";
+      
+       URL url = new URL(ip);
+       HttpURLConnection con = (HttpURLConnection) url.openConnection();
+       con.setRequestMethod("POST");
+       con.setRequestProperty("date", u.getDate());
+       con.setRequestProperty("time", u.getTime());
+       con.setRequestProperty("state", u.getState());
+       con.setRequestProperty("pickup", u.getPickup());
+       con.setRequestProperty("address", u.getAddress());
+       con.setRequestProperty("street", u.getStreet());
+       con.setRequestProperty("id", u.getID());
+       con.setDoOutput(true);
+       BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+        while ((inputLine = in.readLine()) != null) {
+        	response.append(inputLine);
+        }
+        in.close();// print status code
+        //System.out.println(response.statusCode());
+
+        // print response body
+        //System.out.println(response.body());
+        String i = response.toString();
+        
+        
+        return;
+ 
+        
+    }
+     
+      public  void postRemove(String i) throws Exception {
+       String ip = "http://localhost:3000/remove/";
+     
+       URL url = new URL(ip);
+       HttpURLConnection con = (HttpURLConnection) url.openConnection();
+       con.setRequestMethod("POST");
+       con.setRequestProperty("index", i);
+       con.setDoOutput(true);
+       BufferedReader in = new BufferedReader(
+                new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+        while ((inputLine = in.readLine()) != null) {
+        	response.append(inputLine);
+        }
+        in.close();// print status code
+        //System.out.println(response.statusCode());
+
+        // print response body
+        //System.out.println(response.body());
+        String s = response.toString();
+        
+        
+        return;
+ 
+        
+    }
     
 }

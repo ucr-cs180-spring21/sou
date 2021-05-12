@@ -18,16 +18,16 @@ import javafx.stage.Stage;
  */
 public class BackupController  {
 
-    private ArrayList<String> data;
+    private PrimaryController pc;
     @FXML
     private TextField backup_textfield;
     
-    public BackupController(ArrayList<String> d){
-        data = d;
+    BackupController(PrimaryController p){
+        pc = p;
     }
     @FXML
     private void handleBackupBtn(){
-        FileIO fio = new FileIO(data);
+        FileIO fio = new FileIO(pc.getData());
         fio.backupData(backup_textfield.getText());
         
         Stage stage = (Stage) backup_textfield.getScene().getWindow();

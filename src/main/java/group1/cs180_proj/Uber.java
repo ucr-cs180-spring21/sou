@@ -12,8 +12,15 @@ import java.io.Serializable;
  * @author patri
  */
 public class Uber implements Serializable{
-    private String date,time,state,pickup,address,street;
+    private String date,time,state,pickup,address,street,id;
 
+    public String getID(){
+        return id;
+    }
+    
+    public void setID(String id){
+        this.id = id;
+    }
     public String getDate() {
         return date;
     }
@@ -66,13 +73,25 @@ public class Uber implements Serializable{
         return address + " " + street;
     }
     
-    public Uber(String d, String t, String se, String p, String a, String st){
-        date = d;
-        time = t;
-        state = se.toUpperCase();
-        pickup = p.toUpperCase();
-        address = a.toUpperCase();
-        street = st.toUpperCase();
+    public Uber(String d, String t, String se, String p, String a, String st, String i){
+        this.date = d;
+        this.time = t;
+        this.state = se.toUpperCase();
+        this.pickup = p.toUpperCase();
+        this.address = a.toUpperCase();
+        this.street = st.toUpperCase();
+        this.id = i;
+        
+    }
+    
+    public Uber(Uber foo){
+        this.date = foo.getDate();
+        this.time = foo.getTime();
+        this.state = foo.getState();
+        this.pickup = foo.getPickup();
+        this.address = foo.getAddress();
+        this.street = foo.getStreet();
+        this.id = foo.getID();
     }
     
     @Override
