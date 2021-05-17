@@ -4,6 +4,7 @@ group1\cs180_proj\FileIO$FileTest.class
 group1\cs180_proj\InsertController.class
 group1\cs180_proj\EditController.class
 group1\cs180_proj\PrimaryController.class
+group1\cs180_proj\Http$Search.class
 group1\cs180_proj\Uber.class
 module-info.class
 group1\cs180_proj\ImportController.class

@@ -31,43 +31,15 @@ app.get('/search/', (req,res) => {
     console.log('Request received: ' + req.header('column') + ', ' + req.header('entry'));
     
     if(req.header('column') == 'all'){
-        var anal;
+       
         ret = data;
-        var t0 = performance.now();
-        /* 
-        //uncomment for slow analysis
-        
-        lastRequest = analysis(ret);
-        
-        */
-
-
-        if(busiestDate.size == 0){
-            busiestDate = mode0(ret,'date');
-            busiestTime = mode0(ret, 'time');
-            busiestPickup = mode0(ret,'pickup');
-            busiestState = mode0(ret,'state');
-            busiestStreet = mode0(ret,'street');
-            earliestTime = findEarliestTime(ret);
-            latestTime = findLatestTime(ret);
-
-        }
-        anal = new Analysis( 'Busiest Date: ' + busiestDate['max'] + ' | Occurrences: ' + busiestDate[busiestDate['max']], 
-                    'Busiest time: ' + busiestTime['max'] + ' | Occurrences: ' + busiestTime[busiestTime['max']], 
-                    'Busiest state: ' + busiestState['max'] + ' | Occurrences: ' + busiestState[busiestState['max']], 
-                    'Busiest pickup: ' + busiestPickup['max'] + ' | Occurrences: ' + busiestPickup[busiestPickup['max']], 
-                    'Busiest street: ' + busiestStreet['max'] + ' | occurrences: ' + busiestStreet[busiestStreet['max']], 
-                    earliestTime, latestTime);
-        lastRequest = anal;
-        var t1 = performance.now();
-        console.log('Time taken to execute analysis: ' + (t1-t0).toString());
     
     }
     else{
         const column = req.header('column');
          const entry = req.header('entry');
         ret = search(data,column,entry);
-        lastRequest = analysis(ret);
+        
     } 
 
     res.send(JSON.stringify(ret));
@@ -76,8 +48,42 @@ app.get('/search/', (req,res) => {
 })
 
 app.get('/analysis/', (req,res) => {
+    var ret;
     console.log('Analysis request received for last search.');
-    res.send(JSON.stringify(lastRequest));
+    
+    if(req.header('column') == 'all'){
+        
+        var t0 = performance.now();
+
+
+        if(busiestDate.size == 0){
+            busiestDate = mode0(data,'date');
+            busiestTime = mode0(data, 'time');
+            busiestPickup = mode0(data,'pickup');
+            busiestState = mode0(data,'state');
+            busiestStreet = mode0(data,'street');
+            earliestTime = findEarliestTime(data);
+            latestTime = findLatestTime(data);
+
+        }
+        ret = new Analysis( 'Busiest Date: ' + busiestDate['max'] + ' | Occurrences: ' + busiestDate[busiestDate['max']], 
+                    'Busiest time: ' + busiestTime['max'] + ' | Occurrences: ' + busiestTime[busiestTime['max']], 
+                    'Busiest state: ' + busiestState['max'] + ' | Occurrences: ' + busiestState[busiestState['max']], 
+                    'Busiest pickup: ' + busiestPickup['max'] + ' | Occurrences: ' + busiestPickup[busiestPickup['max']], 
+                    'Busiest street: ' + busiestStreet['max'] + ' | occurrences: ' + busiestStreet[busiestStreet['max']], 
+                    earliestTime, latestTime);
+        
+        var t1 = performance.now();
+        console.log('Time taken to execute analysis: ' + (t1-t0).toString());
+    
+    }
+    else{
+        const column = req.header('column');
+         const entry = req.header('entry');
+        ret = analysis(search(data,column,entry));
+        
+    } 
+    res.send(JSON.stringify(ret));
 })
 
 app.post('/insert/', (req,res) =>{

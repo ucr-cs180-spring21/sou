@@ -21,10 +21,22 @@ import org.json.JSONObject;
 
 public class Http {
     
-
+  
+  
+  private class Search{
+      public String column, entry;
+      
+      Search(String c, String e){
+          this.column = c;
+          this.entry = e;
+      }
+  }
    
+  Search lastSearch;
+  
    
    public  ArrayList<Uber> getSearch(String column, String entry) throws Exception {
+       lastSearch = new Search(column, entry);
        String ip = "http://localhost:3000/search/";
        ArrayList<Uber> ret = new ArrayList();
        URL url = new URL(ip);
@@ -66,11 +78,13 @@ public class Http {
          return ret;
     }
      public  String getAnalysis() throws Exception {
+       
        String ip = "http://localhost:3000/analysis/";
        String ret;
        URL url = new URL(ip);
        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-//       con.setRequestMethod("GET");
+       con.setRequestProperty("column", lastSearch.column);
+       con.setRequestProperty("entry", lastSearch.entry);
        BufferedReader in = new BufferedReader(
                 new InputStreamReader(con.getInputStream()));
         String inputLine;
