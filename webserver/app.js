@@ -13,7 +13,6 @@ const pathCSV = 'dial7.csv';
 var data = [];
 var busiestDate = new Map(), busiestPickup = new Map(), busiestState = new Map(),
     busiestStreet = new Map(), earliestTime, latestTime, busiestTime;
-var lastRequest;
 var instream;
 var outstream;
 var rl;
