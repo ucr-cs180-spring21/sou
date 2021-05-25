@@ -48,7 +48,7 @@ app.get('/search/', (req,res) => {
 
 app.get('/analysis/', (req,res) => {
     var ret;
-    console.log('Analysis request received for:' + req.header('column' + ': ' + req.header('entry')));
+    console.log('Analysis request received for:' + req.header('column') + ': ' + req.header('entry'));
     
     if(req.header('column') == 'all'){
         
