@@ -27,7 +27,7 @@ public class BackupController  {
     }
     @FXML
     private void handleBackupBtn(){
-        FileIO fio = new FileIO(pc.getData());
+        FileIO fio = new SerializeIO(pc.getData());
         fio.backupData(backup_textfield.getText());
         
         Stage stage = (Stage) backup_textfield.getScene().getWindow();

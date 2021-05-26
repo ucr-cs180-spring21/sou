@@ -28,23 +28,22 @@ public class ImportController  {
    }
    
    public void populate(){
-       fio = new FileIO();
-       
-       ArrayList<String> files = fio.getFiles();
-       
-       for(String f: files){
+        fio = new SerializeIO();
+
+        ArrayList<String> files = fio.getFiles();
+
+        for(String f: files){
            listview_import.getItems().add(f);
-       }
+        }
    }
    @FXML
    private void handleImportBtn(){
-       String selection = listview_import.getSelectionModel().getSelectedItem().toString();
-       System.out.println(selection);
-       pc.setData(fio.importData(selection));
-      // pc.setData(data);
-      pc.handleReloadbtn();
-       Stage stage = (Stage) listview_import.getScene().getWindow();
-       stage.close();
+        String selection = listview_import.getSelectionModel().getSelectedItem().toString();
+        System.out.println(selection);
+        pc.setData(fio.importData(selection));
+        pc.handleReloadbtn();
+        Stage stage = (Stage) listview_import.getScene().getWindow();
+        stage.close();
    }
    
    
