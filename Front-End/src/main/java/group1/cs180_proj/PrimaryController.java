@@ -219,7 +219,6 @@ public class PrimaryController {
     
     @FXML
     private void quit() throws IOException{
-        //Add function to send "hello" to server here
       
             System.exit(0);
         

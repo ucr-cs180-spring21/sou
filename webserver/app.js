@@ -19,6 +19,7 @@ var rl;
 
 ///////////////////////////////////////////////////////
 //Server Start
+///////////////////////////////////////////////////////
 
 parseCSV();
 app.get('/', (req, res) => {
@@ -36,7 +37,7 @@ app.get('/search/', (req,res) => {
     }
     else{
         const column = req.header('column');
-         const entry = req.header('entry');
+        const entry = req.header('entry');
         ret = search(data,column,entry);
         
     } 
@@ -56,6 +57,7 @@ app.get('/analysis/', (req,res) => {
 
 
         if(busiestDate.size == 0){
+
             busiestDate = mode0(data,'date');
             busiestTime = mode0(data, 'time');
             busiestPickup = mode0(data,'pickup');
@@ -78,7 +80,7 @@ app.get('/analysis/', (req,res) => {
     }
     else{
         const column = req.header('column');
-         const entry = req.header('entry');
+        const entry = req.header('entry');
         ret = analysis(search(data,column,entry));
         
     } 
@@ -92,16 +94,17 @@ app.post('/insert/', (req,res) =>{
     
     data.push(u);
     res.send(data.length.toString());
-    increment('date', req.header('date'));
-    increment('time', req.header('time'));
-    increment('state', req.header('state'));
-    increment('pickup', req.header('pickup'));
-    increment('address', req.header('address'));
-    increment('street', req.header('street'));
+    var params = ['date', 'time', 'state', 'pickup', 'address', 'street'];
+    for(var i = 0; i < params.length; i++){
+        increment(params[i], req.header(i));
+    }
+
 })
 
 app.post('/edit/', (req,res) =>{
     console.log('Edit request received.');
+
+    
     if(req.header('date') != data[req.header('id').date]){
         decrement('date', data[req.header('id')].date);
         increment('date', req.header('date'));
@@ -138,12 +141,10 @@ app.post('/remove/', (req,res) =>{
     console.log('Remove request received.');
     data[req.header('index')] = null;
     res.send("Success");
-    decrement('date', req.header('date'));
-    decrement('time', req.header('time'));
-    decrement('state', req.header('state'));
-    decrement('pickup', req.header('pickup'));
-    decrement('address', req.header('address'));
-    decrement('street', req.header('street'));
+    var params = ['date', 'time', 'state', 'pickup', 'address', 'street'];
+    for(var i = 0; i < params.length; i++){
+        decrement(params[i], req.header(params[i]));
+    }
     
 })
   
@@ -152,7 +153,7 @@ app.listen(port, () => {
 })
 
 
-
+///////////////////////////////////////////////////////
 //Server End
 ///////////////////////////////////////////////////////
 
